@@ -6,26 +6,25 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-import axios from '../../axios-orders';
+
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import * as actionTypes from '../../store/actions';
+//import * as actionTypes from '../../store/actions/actionTypes';
+import * as burgerBuilderActions from '../../store/actions/burgerBuilder';
+import axios from '../../axios-orders';
 
 class BurgerBuilder extends Component {
 
     state = {
-        purchasing: false,
-        loading: false,
-        error: false
+        purchasing: false
     }
 
-    componentDidMount () {
-        axios.get('https://myburgerproject-70250.firebaseio.com/ingredients.json')
-            .then(response=> {
-                this.setState({ingredients: response.data});
-            });
+    componentDidMount() {
+        //console.log(this.props);
+        this.props.onInitIngredients();
+        //console.log(this.props);
     }
-
+    
     updatePurchaseState (ingredients) {
         const sum = Object.keys(ingredients).map(igKey => {
             return ingredients[igKey];
@@ -57,8 +56,8 @@ purchaseContinueHandler = () => {
         } 
         let orderSummary =  null;
         
-        let burger = <Spinner />;
-
+        let burger = this.props.error ? <p>Ingredients can't be loaded!</p> : <Spinner />;
+        //console.log("aaaaaaaaaaaaaaaaaaa", this.props);
         if (this.props.ings) {
             burger = (
                 <Aux>
@@ -97,15 +96,22 @@ purchaseContinueHandler = () => {
 const mapStateToProps = state => {
     return {
         ings: state.ingredients,
-        price: state.totalPrice
+        price: state.totalPrice,
+        error: state.error
     };
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
-        onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})
-    }
+        //onIngredientAdded: (ingName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
+        //onIngredientRemoved: (ingName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName}),
+        //onInitIngredients: () => dispatch({type: actionTypes.SET_INGREDIENTS }),
+
+        onIngredientAdded: (ingName) => dispatch(burgerBuilderActions.addIngredient(ingName)),
+        onIngredientRemoved: ingName => dispatch(burgerBuilderActions.removeIngredient(ingName)),
+        //onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients)
+        onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())   
+     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps) (withErrorHandler(BurgerBuilder, axios));
