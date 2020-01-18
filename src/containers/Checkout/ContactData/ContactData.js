@@ -190,9 +190,9 @@ orderHandler = (event) => {
 
 const mapStateToProps = state => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice.toFixed(2),
-        loading: state.loading
+        ings: state.burgerBuilder.ingredients,
+        price: state.burgerBuilder.totalPrice.toFixed(2),
+        loading: state.order.loading
     }
 };
 

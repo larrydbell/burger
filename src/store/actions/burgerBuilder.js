@@ -43,15 +43,4 @@ export const initIngredients = () => {
 };
 
 
-//export const initIngredients = () => {
-//    return dispatch => {
-//        axios.get('https://myburgerproject-70250.firebaseio.com/ingredients.json')
-//            .then( response => {
-//               dispatch(setIngredients(response.data));
-//            } )
-//            .catch( error => {
-//                dispatch(fetchIngredientsFailed());
-//            } );
-//    };
-//};
 
